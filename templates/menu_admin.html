@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Administrador - Botillería El Chascón</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .admin-card {
+            max-width: 700px;
+            width: 100%;
+            border-radius: 30px;
+            padding: 40px 36px;
+            background: #ffffffee;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            text-align: center;
+        }
+
+        .admin-logo {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .admin-pill {
+            border-radius: 999px;
+            padding: 0.8rem 1rem;
+            border: 2px solid #d0d0d0;
+            background: #fafafa;
+            color: #333;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+            transition: 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .admin-pill:hover {
+            background: #e0e0e0;
+            border-color: #b5b5b5;
+            color: #000;
+        }
+
+        .admin-row {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .btn-salir {
+            border-radius: 999px;
+            border: 1px solid #d0d0d0;
+            background: #fafafa;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-salir:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-card">
+
+    <div class="top-actions">
+        <a href="{% url 'landing' %}" class="btn btn-salir">Salir</a>
+    </div>
+
+    <!-- Logo arriba -->
+    <img src="{% static 'img/BotilleriaExtendidoLOGO.png' %}"
+         alt="Logo Botillería El Chascón"
+         class="admin-logo">
+
+    <h2 class="admin-title">Opciones del Administrador</h2>
+
+    <!-- Pastillas una al lado de la otra, más pequeñas -->
+    <div class="row g-3 admin-row">
+        <div class="col-6 col-md-3">
+            <a href="/inventario/" class="admin-pill">Inventario</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/ventas/" class="admin-pill">Ventas</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/analisis/" class="admin-pill">Análisis</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a href="/reportes/" class="admin-pill">Reportes</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

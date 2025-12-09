@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Análisis de ventas - Botillería El Chascón{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <h1 class="mb-3">Análisis de ventas</h1>
+  <p class="text-muted">
+    Rango analizado: {{ desde }} a {{ hasta }}.
+  </p>
+
+  <!-- Filtro simple por fechas (GET) -->
+  <form method="get" class="row g-2 mb-4">
+    <div class="col-sm-4">
+      <label for="desde" class="form-label mb-0">Desde</label>
+      <input type="date" id="desde" name="desde" class="form-control" value="{{ desde }}">
+    </div>
+    <div class="col-sm-4">
+      <label for="hasta" class="form-label mb-0">Hasta</label>
+      <input type="date" id="hasta" name="hasta" class="form-control" value="{{ hasta }}">
+    </div>
+    <div class="col-sm-4 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100">Actualizar análisis</button>
+    </div>
+  </form>
+
+  <!-- Resumen rápido -->
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Total puntos de datos</h5>
+          <p class="display-6 mb-0">{{ vd_labels|length }}</p>
+          <p class="text-muted small">Días con ventas registradas en el período.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Productos analizados (top)</h5>
+          <p class="display-6 mb-0">{{ top_labels|length }}</p>
+          <p class="text-muted small">Top de productos por cantidad vendida.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Categorías consideradas</h5>
+          <p class="display-6 mb-0">{{ cat_labels|length }}</p>
+          <p class="text-muted small">Ventas agrupadas por categoría.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row mb-4">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Ventas diarias</h4>
+          <p class="text-muted small">Evolución del monto total vendido por día.</p>
+          <canvas id="ventasDiariasChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Top productos más vendidos</h4>
+          <p class="text-muted small">Cantidad vendida por producto en el período.</p>
+          <canvas id="topProductosChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="mt-5">
+  <h3 class="mb-3">Rendimiento por trabajador</h3>
+  <p class="text-muted">
+    Resumen de ventas por trabajador y turno en el rango seleccionado.
+  </p>
+
+  {% if stats_trabajadores %}
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table mb-0 align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Trabajador</th>
+                <th>Turno</th>
+                <th class="text-center">N° ventas</th>
+                <th class="text-end">Monto total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fila in stats_trabajadores %}
+                <tr>
+                  <td>{{ fila.trabajador__nombre }}</td>
+                  <td>
+                    {% if fila.turno__turno_tipo %}
+                      {{ fila.turno__turno_tipo|title }}
+                    {% else %}
+                      <span class="text-muted">Sin turno</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-center">{{ fila.total_ventas }}</td>
+                  <td class="text-end">
+                    ${{ fila.monto_total|floatformat:0 }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted">
+      No hay ventas asociadas a trabajadores en el periodo seleccionado.
+    </p>
+  {% endif %}
+</section>
+
+  <div class="row mb-5">
+    <div class="col-lg-8 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Ventas por categoría</h4>
+          <p class="text-muted small">Monto total vendido por categoría.</p>
+          <canvas id="categoriasChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Detalle de categorías</h4>
+          <ul class="list-group list-group-flush">
+            {% if categorias_tabla %}
+              {% for c in categorias_tabla %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  {{ c.cat|default:"Sin categoría" }}
+                  <span class="badge bg-primary rounded-pill">
+                    ${{ c.monto|floatformat:0 }}
+                  </span>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li class="list-group-item text-muted">
+                No hay ventas registradas en este período.
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Datos desde Django (listas de Python → listas JS)
+  const vdLabels = {{ vd_labels|safe|default:"[]" }};
+  const vdData   = {{ vd_data|safe|default:"[]" }};
+
+  const topLabels = {{ top_labels|safe|default:"[]" }};
+  const topData   = {{ top_data|safe|default:"[]" }};
+
+  const catLabels = {{ cat_labels|safe|default:"[]" }};
+  const catData   = {{ cat_data|safe|default:"[]" }};
+
+  // Ventas diarias
+  const ctxVentas = document.getElementById('ventasDiariasChart').getContext('2d');
+  new Chart(ctxVentas, {
+    type: 'line',
+    data: {
+      labels: vdLabels,
+      datasets: [{
+        label: 'Monto vendido',
+        data: vdData,
+        fill: false,
+        borderWidth: 2,
+        tension: 0.2
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  // Top productos
+  const ctxTop = document.getElementById('topProductosChart').getContext('2d');
+  new Chart(ctxTop, {
+    type: 'bar',
+    data: {
+      labels: topLabels,
+      datasets: [{
+        label: 'Cantidad vendida',
+        data: topData,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      scales: {
+        x: { beginAtZero: true }
+      }
+    }
+  });
+
+  // Categorías
+  const ctxCat = document.getElementById('categoriasChart').getContext('2d');
+  new Chart(ctxCat, {
+    type: 'bar',
+    data: {
+      labels: catLabels,
+      datasets: [{
+        label: 'Monto vendido',
+        data: catData,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
+</script>
+{% endblock %}

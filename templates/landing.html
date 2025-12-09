@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Botillería El Chascón</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;  /* ← permite poner el aviso arriba */
+            align-items: center;
+            justify-content: flex-start; /* ← contenido arriba */
+            padding-top: 40px;           /* ← espacio superior elegante */
+            margin: 0;
+        }
+
+        .landing-card {
+            max-width: 700px;
+            width: 100%;
+            border-radius: 30px;
+            padding: 40px 32px;
+            background: #ffffffee;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            text-align: center;
+            margin-top: 25px;  /* ← separa del aviso */
+        }
+
+        /* LOGO GRANDE E IMPONENTE */
+        .landing-logo {
+            max-width: 600px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 22px;
+        }
+
+        .landing-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        /* BOTONES REDONDOS Y LIMPIOS */
+        .btn-clean {
+            font-weight: 600;
+            border-radius: 40px;
+            padding: 0.6rem 1.5rem;
+            border: 2px solid #d0d0d0;
+            background: #fafafa;
+            color: #333;
+            transition: 0.2s ease;
+            max-width: 240px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        .btn-clean:hover {
+            background: #e0e0e0;
+            border-color: #b5b5b5;
+            color: #000;
+        }
+
+        /* AVISO DE STOCK BAJO ARRIBA */
+        .alert-stock {
+            max-width: 480px;
+            border-radius: 14px;
+            font-size: 1rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+
+<body>
+
+    {% if hay_stock_bajo %}
+    <div class="alert alert-danger alert-stock text-center fw-semibold py-3 mb-3">
+        ¡Hay {{ total_stock_bajo }} producto{% if total_stock_bajo != 1 %}s{% endif %} con stock bajo! 
+        <a href="{% url 'inventario:lista' %}" class="text-danger fw-bold ms-1" style="text-decoration: underline;">
+            Revisar inventario
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="landing-card">
+        <img src="{% static 'img/BotilleriaExtendidoLOGO.png' %}"
+             alt="Logo Botillería El Chascón"
+             class="landing-logo">
+
+        <h1 class="landing-title">Botillería El Chascón</h1>
+
+        <div class="d-grid gap-3 mt-4">
+            <a href="{% url 'admin_pin' %}" class="btn btn-clean btn-lg">
+                ADMIN
+            </a>
+
+            <a href="{% url 'inicio' %}" class="btn btn-clean btn-lg">
+                INICIO
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

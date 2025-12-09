@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="mb-4">Editar trabajador</h3>
+
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label">Nombre</label>
+              <input type="text"
+                     name="nombre"
+                     class="form-control"
+                     value="{{ trabajador.nombre }}"
+                     required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Turno base</label>
+              <select name="turno_base" class="form-select" required>
+                <option value="DIA" {% if trabajador.turno_base == "DIA" %}selected{% endif %}>Día (11:00 - 19:00)</option>
+                <option value="NOCHE" {% if trabajador.turno_base == "NOCHE" %}selected{% endif %}>Noche (19:00 - 01:00)</option>
+              </select>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{% url 'lista_trabajadores' %}" class="btn btn-outline-secondary">
+                Cancelar
+              </a>
+              <button type="submit" class="btn btn-dark">
+                Guardar cambios
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

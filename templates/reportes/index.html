@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reportes - Botillería El Chascón{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <h1 class="mb-3">Panel de reportes del negocio</h1>
+  <p class="text-muted">
+    Análisis automático desde {{ desde }} hasta {{ hasta }}.
+  </p>
+
+  <!-- Resumen de negocio -->
+{# --- GANANCIA POR DÍA (widget pequeño) --- #}
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-sm border-0">
+      <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+        <div>
+          <h6 class="text-uppercase text-muted mb-1">Ganancia por día</h6>
+          <h3 class="mb-0">
+            ${{ ganancia_dia|floatformat:0 }}
+          </h3>
+          <small class="text-muted">
+            Fecha: {{ fecha_ganancia|date:"d-m-Y" }}
+          </small>
+        </div>
+
+        <form method="get" class="d-flex flex-column flex-md-row align-items-md-center gap-2 mt-3 mt-md-0">
+          <div class="text-muted small me-md-2">
+            Seleccionar día (últimos 30 días)
+          </div>
+          <input
+            type="date"
+            name="fecha_ganancia"
+            class="form-control"
+            style="max-width: 190px;"
+            value="{{ fecha_ganancia|date:'Y-m-d' }}"
+            min="{{ inicio_rango_ganancia|date:'Y-m-d' }}"
+            max="{{ fin_rango_ganancia|date:'Y-m-d' }}"
+          >
+          <button type="submit" class="btn btn-dark ms-md-2">
+            Ver
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# --- FIN GANANCIA POR DÍA --- #}
+
+
+  <div class="row mb-4">
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Ventas últimos 30 días</h6>
+          <p class="display-6 mb-1">${{ total_vendido_30|floatformat:0 }}</p>
+          <p class="small text-muted mb-0">Monto total vendido (solo ventas confirmadas).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Margen bruto estimado</h6>
+          <p class="display-6 mb-1">${{ margen_30|floatformat:0 }}</p>
+          <p class="small text-muted mb-0">
+            Ganancia estimada considerando costo vs precio de venta.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Productos activos</h6>
+          <p class="display-6 mb-1">{{ listado|length }}</p>
+          <p class="small text-muted mb-0">Productos actualmente activos en inventario.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h6 class="text-muted">Alertas de stock pendientes</h6>
+          <p class="display-6 mb-1">{{ alertas|length }}</p>
+          <p class="small text-muted mb-0">Alertas de stock crítico sin atender.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <!-- Top productos -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Top productos más vendidos (30 días)</h4>
+          {% if top_productos %}
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th class="text-end">Cantidad</th>
+                  <th class="text-end">Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for t in top_productos %}
+                <tr>
+                  <td>{{ t.producto__nombre }}</td>
+                  <td class="text-end">{{ t.cantidad_total }}</td>
+                  <td class="text-end">${{ t.monto_total|floatformat:0 }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-muted mb-0">No hay ventas registradas en el período.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Alertas de stock -->
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Alertas de stock crítico</h4>
+          {% if alertas %}
+          <ul class="list-group list-group-flush">
+            {% for a in alertas %}
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+              <div>
+                <strong>{{ a.producto.nombre }}</strong><br>
+                <small class="text-muted">{{ a.mensaje }}</small><br>
+                <small class="text-muted">Creada: {{ a.creado_en|date:"d-m-Y H:i" }}</small>
+              </div>
+              <span class="badge bg-danger rounded-pill">Crítico</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No hay alertas pendientes, el stock está bajo control.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventario y sugerencias -->
+  <div class="row mb-4">
+    <div class="col-lg-7 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Estado de stock por producto</h4>
+          <div class="table-responsive" style="max-height: 380px; overflow-y:auto;">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>SKU</th>
+                  <th>Producto</th>
+                  <th class="text-center">Stock</th>
+                  <th class="text-center">Mínimo</th>
+                  <th class="text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in listado %}
+                {% with p=item.producto %}
+                <tr>
+                  <td>{{ p.sku }}</td>
+                  <td>{{ p.nombre }}</td>
+                  <td class="text-center">{{ p.stock }}</td>
+                  <td class="text-center">{{ p.stock_minimo }}</td>
+                  <td class="text-center">
+                    {% if item.estado == "BAJO" %}
+                      <span class="badge bg-danger">Bajo</span>
+                    {% elif item.estado == "MEDIO" %}
+                      <span class="badge bg-warning text-dark">Medio</span>
+                    {% else %}
+                      <span class="badge bg-success">Alto</span>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">Sugerencias de compra</h4>
+          <p class="text-muted small">
+            Basado en productos con stock bajo el mínimo y ventas de los últimos 30 días.
+          </p>
+          {% if sugerencias %}
+          <ul class="list-group list-group-flush">
+            {% for p in sugerencias %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ p.nombre }}</strong><br>
+                <small class="text-muted">
+                  Stock actual: {{ p.stock }} | Mínimo: {{ p.stock_minimo }}
+                  {% if p.vendido_30 %}
+                    | Vendido 30 días: {{ p.vendido_30 }}
+                  {% endif %}
+                </small>
+              </div>
+              <span class="badge bg-primary rounded-pill">Reponer</span>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">
+            No hay sugerencias de compra en este momento.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

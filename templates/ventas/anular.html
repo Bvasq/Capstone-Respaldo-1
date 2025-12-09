@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+
+  <h2>Anular venta #{{ venta.id }}</h2>
+
+  <div class="alert alert-warning">
+    <strong>Precaución:</strong> Esta acción devolverá automáticamente todo el stock al inventario.
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <label class="form-label">Motivo de anulación</label>
+    <textarea name="motivo" class="form-control" rows="3" required></textarea>
+
+    <button class="btn btn-danger mt-3">Confirmar anulación</button>
+    <a href="{% url 'ventas_historial' %}" class="btn btn-secondary mt-3">Cancelar</a>
+  </form>
+
+</div>
+{% endblock %}

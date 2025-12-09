@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Importar inventario{% endblock %}
+{% block content %}
+<h3 class="mb-3">Importar inventario</h3>
+<div class="bg-white p-3 rounded">
+  <p class="mb-2">Descarga la <a href="{% url 'inventario:plantilla' %}">plantilla CSV</a>, rellénala y súbela.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="archivo" accept=".csv" class="form-control mb-3" required>
+    <button class="btn btn-success">Importar</button>
+    <a class="btn btn-outline-secondary" href="{% url 'inventario:lista' %}">Volver</a>
+  </form>
+</div>
+{% endblock %}

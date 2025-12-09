@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Editar producto{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="mb-3">Editar producto</h1>
+
+  {# mostramos mensajes de error / éxito #}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post" class="row g-3">
+    {% csrf_token %}
+    {% with fv=form_values|default:None %}
+
+      <!-- SKU -->
+      <div class="col-md-6">
+        <label class="form-label">SKU</label>
+        <input
+          type="text"
+          name="sku"
+          class="form-control"
+          value="{{ fv.sku|default:p.sku }}"
+          required
+        >
+      </div>
+
+      <!-- Precio -->
+      <div class="col-md-6">
+        <label class="form-label">Precio unitario ($)</label>
+        <input
+          type="text"
+          name="precio_unitario"
+          class="form-control"
+          value="{{ fv.precio_unitario|default:p.precio_unitario }}"
+          required
+        >
+      </div>
+
+      <!-- Nombre -->
+      <div class="col-md-12">
+        <label class="form-label">Nombre</label>
+        <input
+          type="text"
+          name="nombre"
+          class="form-control"
+          value="{{ fv.nombre|default:p.nombre }}"
+          required
+        >
+      </div>
+
+      <!-- Stock -->
+      <div class="col-md-6">
+        <label class="form-label">Stock</label>
+        <input
+          type="number"
+          name="stock"
+          class="form-control"
+          value="{{ fv.stock|default:p.stock }}"
+          min="0"
+          required
+        >
+      </div>
+
+      <!-- Stock mínimo -->
+      <div class="col-md-6">
+        <label class="form-label">Stock mínimo</label>
+        <input
+          type="number"
+          name="stock_minimo"
+          class="form-control"
+          value="{{ fv.stock_minimo|default:p.stock_minimo }}"
+          min="0"
+          required
+        >
+      </div>
+
+      <!-- Categoría -->
+      <div class="col-md-12">
+        <label class="form-label">Categoría</label>
+        <select name="categoria" class="form-select" required>
+          <option value="">-- Selecciona una categoría --</option>
+          {% for c in categorias %}
+            {% if fv %}
+              {# cuando volvemos del POST con errores, usamos el valor posteado #}
+              {% if fv.categoria|stringformat:"s" == c.id|stringformat:"s" %}
+                <option value="{{ c.id }}" selected>{{ c.nombre }}</option>
+              {% else %}
+                <option value="{{ c.id }}">{{ c.nombre }}</option>
+              {% endif %}
+            {% else %}
+              {# carga normal: usamos la categoría actual del producto #}
+              {% if p.categoria_id == c.id %}
+                <option value="{{ c.id }}" selected>{{ c.nombre }}</option>
+              {% else %}
+                <option value="{{ c.id }}">{{ c.nombre }}</option>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Activo -->
+      <div class="col-md-12 form-check mt-2">
+        <input
+          type="checkbox"
+          name="activo"
+          id="id_activo"
+          class="form-check-input"
+          value="1"
+          {% if fv %}
+            {% if fv.activo %}checked{% endif %}
+          {% else %}
+            {% if p.activo %}checked{% endif %}
+          {% endif %}
+        >
+        <label class="form-check-label" for="id_activo">Activo</label>
+      </div>
+
+      <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{% url 'inventario:lista' %}" class="btn btn-secondary ms-2">Volver</a>
+      </div>
+
+    {% endwith %}
+  </form>
+</div>
+{% endblock %}

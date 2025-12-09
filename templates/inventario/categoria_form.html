@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-3">
+  {% if categoria %}Editar categoría{% else %}Nueva categoría{% endif %}
+</h3>
+
+<form method="post" class="mt-3" style="max-width:400px;">
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label class="form-label">Nombre</label>
+    <input
+      type="text"
+      name="nombre"
+      class="form-control"
+      value="{% if categoria %}{{ categoria.nombre }}{% endif %}"
+      required
+    >
+  </div>
+
+  <button type="submit" class="btn btn-primary">Guardar</button>
+  <a href="{% url 'inventario:categorias_lista' %}" class="btn btn-secondary ms-2">
+    Cancelar
+  </a>
+</form>
+
+{% endblock %}

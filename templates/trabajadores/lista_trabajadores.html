@@ -1,0 +1,119 @@
+{% extends "base.html" %} 
+
+{% block content %}
+<div class="container py-5">
+  <!-- Título + botón volver -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold mb-0">Trabajadores</h2>
+    <a href="{% url 'admin_menu' %}" class="btn btn-outline-secondary btn-sm">
+      Volver al menú admin
+    </a>
+  </div>
+
+  <!-- Formulario: agregar nuevo trabajador -->
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Agregar nuevo trabajador</h5>
+      <form method="POST" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-6">
+          <label class="form-label">Nombre</label>
+          <input type="text" name="nombre" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Turno base</label>
+          <select name="turno_base" class="form-select" required>
+            <option value="DIA">Día (11:00 - 19:00)</option>
+            <option value="NOCHE">Noche (19:00 - 01:00)</option>
+          </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+          <button type="submit" class="btn btn-dark w-100">
+            Crear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lista de trabajadores activos -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Lista de trabajadores activos</h5>
+
+      {% if trabajadores %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Nombre</th>
+                <th>Turno base</th>
+                <th style="width: 180px;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in trabajadores %}
+              <tr>
+                <td>{{ t.nombre }}</td>
+                <td>{{ t.get_turno_base_display }}</td>
+                <td>
+                  <a href="{% url 'editar_trabajador' t.id %}" class="btn btn-sm btn-outline-primary">
+                    Editar
+                  </a>
+                  <a href="{% url 'eliminar_trabajador' t.id %}"
+                     class="btn btn-sm btn-outline-danger"
+                     onclick="return confirm('¿Eliminar trabajador?');">
+                    Eliminar
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">No hay trabajadores registrados aún.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Resumen de ventas por trabajador -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="fw-bold mb-3">Resumen de ventas por trabajador</h4>
+      <p class="text-muted">
+        Totales de ventas confirmadas asociadas a cada trabajador (según ventas registradas desde el menú de inicio de trabajadores).
+      </p>
+
+      {% if estadisticas %}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Trabajador</th>
+                <th class="text-center">N° ventas</th>
+                <th class="text-end">Monto total vendido</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in estadisticas %}
+                <tr>
+                  <td>{{ e.trabajador_nombre|default:"Sin asignar" }}</td>
+                  <td class="text-center">{{ e.total_ventas }}</td>
+                  <td class="text-end">
+                    ${{ e.total_monto|floatformat:0 }}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-muted mb-0">
+          Aún no hay ventas asociadas a trabajadores.
+        </p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

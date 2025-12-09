@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="text-center mb-4 fw-bold">Menú administrador</h2>
+
+<div class="admin-menu-wrapper">
+  <div class="admin-menu-grid">
+
+    <!-- Fila 1 -->
+    <a href="{% url 'ventas:rapida' %}" class="menu-pill pill-dark">
+      Ventas
+    </a>
+
+    <a href="{% url 'analisis:index' %}" class="menu-pill pill-light">
+      Análisis
+    </a>
+
+    <!-- Fila 2 -->
+    <a href="{% url 'reportes:index' %}" class="menu-pill pill-light">
+      Reportes
+    </a>
+
+    <a href="{% url 'inventario:lista' %}" class="menu-pill pill-light">
+      Inventario
+    </a>
+
+    <!-- Fila 3 (centrada, ocupa 2 columnas) -->
+    <a href="{% url 'lista_trabajadores' %}" class="menu-pill pill-dark pill-full">
+      Trabajadores
+    </a>
+
+  </div>
+</div>
+
+<div class="text-center mt-4">
+  <a href="{% url 'cerrar_admin' %}" class="text-danger fw-semibold">
+    Cerrar sesión
+  </a>
+</div>
+
+{% endblock %}

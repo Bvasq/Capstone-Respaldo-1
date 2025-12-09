@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de ventas{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+
+  <h2 class="mb-4">Historial de ventas</h2>
+
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for v in ventas %}
+      <tr>
+        <td>#{{ v.id }}</td>
+        <td>{{ v.fecha|date:"d/m/Y H:i" }}</td>
+        <td>${{ v.total|floatformat:0 }}</td>
+
+        <td>
+          {% if v.estado == "ANULADA" %}
+            <span class="badge bg-danger">Anulada</span>
+          {% else %}
+            <span class="badge bg-success">Confirmada</span>
+          {% endif %}
+        </td>
+
+        <td>
+          {% if v.estado != "ANULADA" %}
+            <a href="{% url 'anular_venta' v.id %}" class="btn btn-sm btn-outline-danger">
+              Anular
+            </a>
+          {% else %}
+            <span class="text-muted">-</span>
+          {% endif %}
+        </td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endblock %}

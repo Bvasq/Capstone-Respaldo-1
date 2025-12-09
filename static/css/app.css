@@ -1,0 +1,408 @@
+/* ========================
+   PALETA DE COLORES GRISES
+   ======================== */
+
+:root {
+  --bg-main:      #F5F5F5;  /* fondo principal muy claro */
+  --bg-secondary: #D3D3D3;  /* barras / bloques secundarios */
+  --bg-card:      #FFFFFF;  /* tarjetas y bloques blancos */
+  --border-soft:  #D3D3D3;  /* bordes suaves */
+  --text-main:    #222222;  /* texto principal */
+  --text-muted:   #555555;  /* texto suave */
+  --accent:       #808080;  /* acento */
+  --accent-dark:  #4f4f4f;  /* acento más oscuro */
+  --shadow-soft:  0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* ========================
+   BASE GENERAL
+   ======================== */
+
+html, body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               sans-serif;
+}
+
+/* Contenedor principal de Django (el <main> de base.html) */
+main.container {
+  background-color: var(--bg-main);
+}
+
+/* ========================
+   NAVBAR SUPERIOR
+   ======================== */
+
+.navbar {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.navbar .navbar-text {
+  color: var(--text-main);
+}
+
+/* Botón hamburguesa */
+.navbar .btn-link {
+  color: var(--text-main);
+}
+
+/* Botón "Panel admin" */
+.btn-outline-dark {
+  border-color: var(--accent);
+  color: var(--accent-dark);
+}
+
+.btn-outline-dark:hover {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+/* ========================
+   MENÚ LATERAL (OFFCANVAS)
+   ======================== */
+
+.offcanvas {
+  background-color: var(--bg-main);
+}
+
+.offcanvas-header {
+  background-color: var(--bg-secondary) !important;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.offcanvas-title {
+  color: var(--text-main);
+}
+
+/* Stack de botones del menú */
+.menu-stack {
+  padding-top: 14px;
+  padding-left: 16px;
+}
+
+/* Pastillas del menú lateral */
+.menu-pill {
+  display: block;
+  width: 92%;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 18px;
+  padding: 14px 20px;
+  margin: 10px 0;
+  text-decoration: none;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: transform .12s ease, box-shadow .12s ease,
+              background-color .12s ease, color .12s ease;
+}
+
+.menu-pill:hover {
+  background-color: #e8e8e8;
+  color: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.menu-pill.active {
+  background-color: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+/* ========================
+   TARJETAS / CARDS GENERALES
+   ======================== */
+
+.card {
+  background-color: var(--bg-card);
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+}
+
+.card-header {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* ========================
+   HOME (INICIO) - BOTONES GRANDES
+   ======================== */
+
+.home-grid {
+  margin-top: 35px;
+}
+
+.home-card {
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: transform .12s ease, box-shadow .12s ease,
+              background-color .12s ease;
+  height: 100%;
+  background-color: var(--bg-card);
+}
+
+.home-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+  background-color: #f0f0f0;
+}
+
+.home-card-title {
+  font-weight: 700;
+}
+
+/* Para asegurar que los enlaces de los botones grandes no cambien de color */
+a.text-decoration-none.text-dark .card-title,
+a.text-decoration-none.text-dark {
+  color: var(--text-main);
+}
+
+/* ========================
+   REPORTES / ANALISIS / ETC.
+   ======================== */
+
+.bg-light {
+  background-color: var(--bg-main) !important;
+}
+
+.table {
+  background-color: var(--bg-card);
+  border-color: var(--border-soft);
+}
+
+/* ========================
+   ALERTAS DE MENSAJES DJANGO
+   ======================== */
+
+.alert {
+  border-radius: 12px;
+  border-width: 1px;
+}
+
+/* colores neutrales, sin tanto verde/rojo chillón */
+.alert-success {
+  background-color: #e1f2e3;
+  border-color: #b5d6b8;
+  color: #225a27;
+}
+
+.alert-danger {
+  background-color: #fbe4e4;
+  border-color: #e6b5b5;
+  color: #7a1e1e;
+}
+
+.alert-warning {
+  background-color: #fff5dd;
+  border-color: #f1dc9b;
+  color: #6a5413;
+}
+
+.alert-info {
+  background-color: #e5f1ff;
+  border-color: #bfd5f4;
+  color: #144472;
+}
+
+/* ========================
+   VARIOS
+   ======================== */
+
+hr {
+  border-color: var(--border-soft);
+}
+
+.form-control, .form-select {
+  background-color: #ffffff;
+  border-color: var(--border-soft);
+  color: var(--text-main);
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.2rem rgba(128, 128, 128, 0.25);
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-dark);
+  border-color: var(--accent-dark);
+}
+
+/* === Offcanvas / Menú hamburguesa === */
+
+.offcanvas {
+    background: #f5f5f5;              /* gris suave, como el fondo general */
+    border-radius: 0 24px 24px 0;     /* esquinas redondeadas lado derecho */
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+}
+
+.offcanvas-header {
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.offcanvas-title {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+/* Links del menú */
+.offcanvas .nav-link {
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;             /* pastillita */
+    color: #444;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.18s ease, color 0.18s ease, transform 0.12s;
+}
+
+/* Hover */
+.offcanvas .nav-link:hover {
+    background: #e4e4e4;
+    color: #000;
+    transform: translateX(4px);
+}
+
+/* Activo (la que tiene fw-bold la marcamos más fuerte) */
+.offcanvas .nav-link.fw-bold {
+    background: #111;
+    color: #fff;
+}
+/* ====== MENÚ ADMIN – GRID 2x2 + 1 CENTRADO ====== */
+
+.admin-menu-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.admin-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 220px);  /* 2 columnas */
+    gap: 20px;
+    justify-content: center;
+}
+
+/* La última pastilla ocupa las 2 columnas -> centrada */
+.pill-full {
+    grid-column: 1 / span 2;
+}
+
+/* Botones tipo pastilla */
+.menu-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 56px;
+    width: 220px;                 /* Todas mismo ancho */
+    border-radius: 999px;
+
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none !important;
+
+    border: 1px solid transparent;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+    transition: all 0.18s ease-in-out;
+    cursor: pointer;
+}
+
+/* Variantes de color */
+.pill-dark {
+    background: #111;
+    color: #fff;
+}
+
+.pill-dark:hover {
+    background: #000;
+    transform: translateY(-2px);
+}
+
+.pill-light {
+    background: #f4f4f4;
+    color: #333;
+}
+
+.pill-light:hover {
+    background: #e4e4e4;
+    transform: translateY(-2px);
+}
+/* ====== MENÚ ADMIN – GRID 2x2 + 1 CENTRADO ====== */
+
+.admin-menu-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.admin-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 220px);  /* 2 columnas */
+    gap: 20px;
+    justify-content: center;
+}
+
+/* La última pastilla ocupa las 2 columnas -> centrada */
+.pill-full {
+    grid-column: 1 / span 2;
+}
+
+/* Botones tipo pastilla SOLO para este menú */
+.menu-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 56px;
+    width: 220px;                 /* Todas mismo ancho */
+    border-radius: 999px;
+
+    font-size: 1.05rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none !important;
+
+    border: 1px solid transparent;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+
+    transition: all 0.18s ease-in-out;
+    cursor: pointer;
+}
+
+/* Variantes de color */
+.pill-dark {
+    background: #111;
+    color: #fff;
+}
+
+.pill-dark:hover {
+    background: #000;
+    transform: translateY(-2px);
+}
+
+.pill-light {
+    background: #f4f4f4;
+    color: #333;
+}
+
+.pill-light:hover {
+    background: #e4e4e4;
+    transform: translateY(-2px);
+}

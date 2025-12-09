@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="fw-bold mb-3">Hola, {{ trabajador.nombre }}</h2>
+
+  <p class="text-muted">
+    Turno de hoy: <strong>{{ turno.turno_tipo }}</strong><br>
+    Inicio: {{ turno.hora_inicio|date:"d/m/Y H:i" }}
+  </p>
+
+  <div class="row g-3 mt-4">
+    <div class="col-6 col-md-4">
+      <a href="/ventas/" class="btn btn-dark w-100 py-3">
+        Ventas
+      </a>
+    </div>
+    <div class="col-6 col-md-4">
+      <a href="/inventario/" class="btn btn-outline-dark w-100 py-3">
+        Inventario
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'cerrar_turno' %}" class="btn btn-outline-danger">
+      Cerrar turno
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inicio - Botillería El Chascón{% endblock %}
+
+{% block head %}
+<style>
+  .home-grid {
+    margin-top: 35px;
+  }
+
+  .home-card {
+    border-radius: 18px;
+    border: 0;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    transition: transform .12s ease, box-shadow .12s ease;
+    height: 100%;
+  }
+
+  .home-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .home-card-title {
+    font-size: 1.4rem;
+    margin: 0;
+  }
+
+  /* 💡 ALERTA FLOTANTE DE STOCK BAJO */
+  .stock-alert-float {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1055;
+    max-width: 320px;
+  }
+</style>
+{% endblock %}
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inicio - Botillería El Chascón{% endblock %}
+
+{% block content %}
+<div class="row align-items-center mb-4">
+  <div class="col-md-8">
+    <h1 class="display-5 fw-bold">Bienvenido a El Chascón</h1>
+    {% if es_admin_menu %}
+      <p class="lead text-muted">
+        Menú de administrador: acceso a inventario, ventas, análisis y reportes.
+      </p>
+    {% else %}
+      <p class="lead text-muted">
+        Modo vendedor: acceso a inventario y ventas.
+      </p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+
+  <!-- Inventario -->
+  <div class="col-md-6 col-lg-3">
+    <a href="{% url 'inventario:lista' %}" class="text-decoration-none text-dark">
+      <div class="card home-card h-100">
+        <div class="card-body d-flex flex-column justify-content-between">
+          <h5 class="card-title home-card-title mb-2">Inventario</h5>
+          <p class="mb-0 text-muted">
+            Gestiona productos, stock y categorías.
+          </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Venta rápida -->
+  <div class="col-md-6 col-lg-3">
+    <a href="{% url 'ventas:rapida' %}" class="text-decoration-none text-dark">
+      <div class="card home-card h-100">
+        <div class="card-body d-flex flex-column justify-content-between">
+          <h5 class="card-title home-card-title mb-2">Venta rápida</h5>
+          <p class="mb-0 text-muted">
+            Registra ventas de forma ágil.
+          </p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  {% if es_admin_menu %}
+    <!-- Análisis (solo admin) -->
+    <div class="col-md-6 col-lg-3">
+      <a href="{% url 'analisis:index' %}" class="text-decoration-none text-dark">
+        <div class="card home-card h-100">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <h5 class="card-title home-card-title mb-2">Análisis</h5>
+            <p class="mb-0 text-muted">
+              KPIs y análisis de ventas.
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Reportes (solo admin) -->
+    <div class="col-md-6 col-lg-3">
+      <a href="{% url 'reportes:index' %}" class="text-decoration-none text-dark">
+        <div class="card home-card h-100">
+          <div class="card-body d-flex flex-column justify-content-between">
+            <h5 class="card-title home-card-title mb-2">Reportes</h5>
+            <p class="mb-0 text-muted">
+              Reportes detallados del negocio.
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

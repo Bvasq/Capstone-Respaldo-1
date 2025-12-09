@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio - Modo Vendedor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .inicio-card {
+            max-width: 500px;
+            width: 100%;
+            border-radius: 30px;
+            padding: 40px 32px;
+            background: #ffffffee;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+            text-align: center;
+        }
+
+        .inicio-logo {
+            max-width: 420px;   /* mismo estilo que landing, bien imponente */
+            width: 100%;
+            height: auto;
+            margin-bottom: 22px;
+        }
+
+        .inicio-subtitle {
+            font-size: 0.95rem;
+            color: #777;
+            margin-bottom: 4px;
+        }
+
+        .inicio-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .inicio-note {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .btn-clean {
+            font-weight: 600;
+            border-radius: 30px;
+            padding: 0.7rem;
+            border: 2px solid #d0d0d0;
+            background: #fafafa;
+            color: #333;
+            transition: 0.2s ease;
+            width: 220px;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        .btn-clean:hover {
+            background: #e0e0e0;
+            border-color: #b5b5b5;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="inicio-card">
+
+    <img src="{% static 'img/BotilleriaExtendidoLOGO.png' %}"
+         alt="Logo Botillería El Chascón"
+         class="inicio-logo">
+
+    <p class="inicio-subtitle">Modo vendedor</p>
+    <h1 class="inicio-title">Menú de trabajo</h1>
+
+    <div class="d-grid gap-3 mt-3">
+        <a href="{% url 'inventario:lista' %}" class="btn btn-clean">
+            Inventario
+        </a>
+        <a href="{% url 'ventas:rapida' %}" class="btn btn-clean">
+            Ventas
+        </a>
+    </div>
+
+    <p class="inicio-note">
+        Este perfil solo tiene acceso a inventario y ventas.
+    </p>
+
+</div>
+
+</body>
+</html>

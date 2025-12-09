@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container text-center mt-5">
+
+  <h1 class="mb-4">Botillería El Chascón</h1>
+  <h3 class="mb-5">logo chascón</h3>
+
+  {% if es_dueno %}
+    {# ========= DASHBOARD DUEÑO ========= #}
+
+    <div class="mb-4">
+      <a href="/admin/"
+         class="btn btn-secondary btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        ADMIN
+      </a>
+    </div>
+
+    <div class="mb-3">
+      <a href="{% url 'analisis:index' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        ANÁLISIS
+      </a>
+
+      <a href="{% url 'inventario:lista' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        INVENTARIO
+      </a>
+    </div>
+
+    <div class="mb-3">
+      <a href="{% url 'ventas:rapida' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        VENTA RÁPIDA
+      </a>
+
+      <a href="{% url 'reportes:index' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        REPORTES
+      </a>
+    </div>
+
+  {% else %}
+    {# ========= DASHBOARD TRABAJADOR ========= #}
+
+    <div class="mb-4">
+      <a href="{% url 'dashboard' %}"
+         class="btn btn-secondary btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        INICIO
+      </a>
+    </div>
+
+    <div class="mb-3">
+      <a href="{% url 'inventario:lista' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        INVENTARIO
+      </a>
+
+      <a href="{% url 'ventas:rapida' %}"
+         class="btn btn-light btn-lg mx-2 mb-3"
+         style="border-radius: 30px; width: 220px;">
+        VENTA RÁPIDA
+      </a>
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h3 class="mb-4">Selecciona tu nombre para iniciar turno</h3>
+
+          {% if trabajadores %}
+            <form method="POST">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label">Trabajador</label>
+                <select name="trabajador_id" class="form-select" required>
+                  <option value="" selected disabled>Elige tu nombre</option>
+                  {% for t in trabajadores %}
+                  <option value="{{ t.id }}">
+                    {{ t.nombre }} ({{ t.get_turno_base_display }})
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-dark w-100">
+                Iniciar turno
+              </button>
+            </form>
+          {% else %}
+            <p class="text-muted">
+              Aún no hay trabajadores registrados. Pídele al administrador que te cree en el sistema.
+            </p>
+          {% endif %}
+
+          <a href="{% url 'landing' %}" class="d-block mt-3 text-muted">
+            Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

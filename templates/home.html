@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Resumen</h5>
+        <p class="mb-1">Total de productos: <strong>{{ total_productos }}</strong></p>
+        <p class="mb-0">Productos bajo stock mínimo: <strong>{{ bajo_stock }}</strong></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Accesos rápidos</h5>
+        <a href="{% url 'producto_create' %}" class="btn btn-success btn-sm">Nuevo producto</a>
+        <a href="{% url 'producto_import' %}" class="btn btn-outline-secondary btn-sm">Importar CSV</a>
+        <a href="{% url 'producto_list' %}" class="btn btn-outline-primary btn-sm">Ver inventario</a>
+        <a href="{% url 'venta_rapida' %}" class="btn btn-primary btn-sm">Venta rápida</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

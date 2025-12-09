@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Venta rápida{% endblock %}
+
+{% block content %}
+<h3 class="mb-3">Venta rápida</h3>
+
+<div class="row g-3">
+  <!-- Columna izquierda: buscador -->
+  <div class="col-lg-6">
+    <div class="input-group mb-2">
+      <span class="input-group-text">🔎</span>
+      <input id="buscador" class="form-control" placeholder="Buscar producto por nombre o SKU...">
+    </div>
+    <ul id="resultados" class="list-group"></ul>
+  </div>
+
+  <!-- Columna derecha: carrito -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Carrito</strong>
+        <button id="btn-vaciar" class="btn btn-sm btn-outline-danger">Vaciar</button>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-sm mb-0" id="tabla-carrito">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th style="width:110px">Cant.</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="total-box">Total: <span id="total">$0</span></div>
+        <button id="btn-finalizar" class="btn btn-primary">Finalizar venta</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const csrftoken = document.cookie.split('; ').find(r=>r.startsWith('csrftoken='))?.split('=')[1];
+const input = document.querySelector('#buscador');
+const resultados = document.querySelector('#resultados');
+const tbody = document.querySelector('#tabla-carrito tbody');
+const totalEl = document.querySelector('#total');
+const btnVaciar = document.querySelector('#btn-vaciar');
+let carrito = [];
+
+// Renderizar carrito
+function renderCarrito(){
+  tbody.innerHTML = "";
+  let total = 0;
+  carrito.forEach((it, idx)=>{
+    const subt = it.precio * it.cantidad;
+    total += subt;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${it.nombre}<div class="small text-muted">${it.sku}</div></td>
+      <td>
+        <input data-idx="${idx}" type="number" min="1" value="${it.cantidad}"
+               class="form-control form-control-sm qty">
+      </td>
+      <td>$${it.precio.toFixed(0)}</td>
+      <td>$${subt.toFixed(0)}</td>
+      <td>
+        <button data-idx="${idx}" class="btn btn-sm btn-outline-danger del">✕</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  totalEl.textContent = "$" + total.toFixed(0);
+}
+
+// Cambiar cantidad
+tbody.addEventListener('input', e=>{
+  if(e.target.classList.contains('qty')){
+    const i = +e.target.dataset.idx;
+    carrito[i].cantidad = Math.max(1, parseInt(e.target.value || "1"));
+    renderCarrito();
+  }
+});
+
+// Eliminar ítem
+tbody.addEventListener('click', e=>{
+  if(e.target.classList.contains('del')){
+    carrito.splice(+e.target.dataset.idx, 1);
+    renderCarrito();
+  }
+});
+
+// Vaciar carrito
+btnVaciar.onclick = ()=>{
+  carrito = [];
+  renderCarrito();
+};
+
+// Buscar productos
+input.addEventListener('input', async ()=>{
+  const q = input.value.trim();
+  resultados.innerHTML = "";
+  if(!q) return;
+  const res = await fetch("{% url 'ventas:buscar' %}?q=" + encodeURIComponent(q));
+  const data = await res.json();
+  data.results.forEach(p=>{
+    const li = document.createElement('li');
+    li.className = "list-group-item d-flex justify-content-between align-items-center";
+    li.innerHTML = `
+      <div>
+        <strong>${p.nombre}</strong>
+        <div class="small text-muted">${p.sku} — $${p.precio.toFixed(0)}</div>
+      </div>
+      <button class="btn btn-sm btn-primary">Agregar</button>`;
+    li.querySelector('button').onclick = ()=>{
+      const idx = carrito.findIndex(x=>x.id===p.id);
+      if(idx>=0) carrito[idx].cantidad += 1;
+      else carrito.push({
+        id:p.id,
+        sku:p.sku,
+        nombre:p.nombre,
+        precio:p.precio,
+        cantidad:1
+      });
+      renderCarrito();
+    };
+    resultados.appendChild(li);
+  });
+});
+
+// Finalizar venta + abrir ticket
+document.querySelector('#btn-finalizar').onclick = async ()=>{
+  if(carrito.length===0) return alert("Agrega productos.");
+  const res = await fetch("{% url 'ventas:confirmar' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      "X-CSRFToken": csrftoken
+    },
+    body: JSON.stringify({items: carrito})
+  });
+  if(!res.ok) return alert(await res.text());
+  const data = await res.json();
+
+  alert("Venta registrada. Total: $" + data.total.toFixed(0));
+
+  // 👉 abrir el ticket.txt en una nueva pestaña para imprimir
+  if (data.ticket_url) {
+    window.open(data.ticket_url, "_blank");
+  }
+
+  carrito = [];
+  renderCarrito();
+  resultados.innerHTML = "";
+  input.value = "";
+};
+</script>
+{% endblock %}
