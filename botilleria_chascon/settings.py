@@ -82,7 +82,7 @@ STATICFILES_DIRS = [
 ]
 
 ALLOWED_HOSTS = [
-    "https://chascon.onrender.com",
+    "https://chascon.onrender.com/",
     "localhost",
     "127.0.0.1",
 ]
