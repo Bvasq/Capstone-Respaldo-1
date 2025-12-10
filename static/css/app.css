@@ -1,23 +1,17 @@
-/* ========================
-   PALETA DE COLORES GRISES
-   ======================== */
-
 :root {
-  --bg-main:      #F5F5F5;  /* fondo principal muy claro */
-  --bg-secondary: #D3D3D3;  /* barras / bloques secundarios */
-  --bg-card:      #FFFFFF;  /* tarjetas y bloques blancos */
-  --border-soft:  #D3D3D3;  /* bordes suaves */
-  --text-main:    #222222;  /* texto principal */
-  --text-muted:   #555555;  /* texto suave */
-  --accent:       #808080;  /* acento */
-  --accent-dark:  #4f4f4f;  /* acento más oscuro */
+  --bg-main:      #F5F5F5;
+  --bg-secondary: #D3D3D3;
+  --bg-card:      #FFFFFF;
+  --border-soft:  #D3D3D3;
+  --text-main:    #222222;
+  --text-muted:   #555555;
+  --accent:       #808080;
+  --accent-dark:  #4f4f4f;
   --shadow-soft:  0 6px 16px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* ========================
-   BASE GENERAL
-   ======================== */
+/* BASE */
 
 html, body {
   background-color: var(--bg-main);
@@ -29,14 +23,12 @@ body {
                sans-serif;
 }
 
-/* Contenedor principal de Django (el <main> de base.html) */
+/* MAIN CONTENEDOR */
 main.container {
   background-color: var(--bg-main);
 }
 
-/* ========================
-   NAVBAR SUPERIOR
-   ======================== */
+/* NAVBAR */
 
 .navbar {
   background-color: var(--bg-secondary) !important;
@@ -63,10 +55,6 @@ main.container {
   color: #ffffff;
 }
 
-/* ========================
-   MENÚ LATERAL (OFFCANVAS)
-   ======================== */
-
 .offcanvas {
   background-color: var(--bg-main);
 }
@@ -80,13 +68,13 @@ main.container {
   color: var(--text-main);
 }
 
-/* Stack de botones del menú */
+/* BOTONES MENU */
 .menu-stack {
   padding-top: 14px;
   padding-left: 16px;
 }
 
-/* Pastillas del menú lateral */
+/* MENU LATERAL*/
 .menu-pill {
   display: block;
   width: 92%;
@@ -117,10 +105,6 @@ main.container {
   border-color: var(--accent);
 }
 
-/* ========================
-   TARJETAS / CARDS GENERALES
-   ======================== */
-
 .card {
   background-color: var(--bg-card);
   border-radius: 18px;
@@ -132,10 +116,6 @@ main.container {
   background-color: var(--bg-secondary);
   border-bottom: 1px solid var(--border-soft);
 }
-
-/* ========================
-   HOME (INICIO) - BOTONES GRANDES
-   ======================== */
 
 .home-grid {
   margin-top: 35px;
@@ -161,15 +141,13 @@ main.container {
   font-weight: 700;
 }
 
-/* Para asegurar que los enlaces de los botones grandes no cambien de color */
+/* HACE QUE LOS BOTONES GRANDES NO CAMBIEN */
 a.text-decoration-none.text-dark .card-title,
 a.text-decoration-none.text-dark {
   color: var(--text-main);
 }
 
-/* ========================
-   REPORTES / ANALISIS / ETC.
-   ======================== */
+/*REPORTES, ANALISIS Y MAS*/
 
 .bg-light {
   background-color: var(--bg-main) !important;
@@ -180,16 +158,12 @@ a.text-decoration-none.text-dark {
   border-color: var(--border-soft);
 }
 
-/* ========================
-   ALERTAS DE MENSAJES DJANGO
-   ======================== */
 
 .alert {
   border-radius: 12px;
   border-width: 1px;
 }
 
-/* colores neutrales, sin tanto verde/rojo chillón */
 .alert-success {
   background-color: #e1f2e3;
   border-color: #b5d6b8;
@@ -213,10 +187,6 @@ a.text-decoration-none.text-dark {
   border-color: #bfd5f4;
   color: #144472;
 }
-
-/* ========================
-   VARIOS
-   ======================== */
 
 hr {
   border-color: var(--border-soft);
@@ -243,11 +213,9 @@ hr {
   border-color: var(--accent-dark);
 }
 
-/* === Offcanvas / Menú hamburguesa === */
-
 .offcanvas {
-    background: #f5f5f5;              /* gris suave, como el fondo general */
-    border-radius: 0 24px 24px 0;     /* esquinas redondeadas lado derecho */
+    background: #f5f5f5;
+    border-radius: 0 24px 24px 0;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
 }
 
@@ -260,29 +228,25 @@ hr {
     letter-spacing: 0.03em;
 }
 
-/* Links del menú */
 .offcanvas .nav-link {
     padding: 0.6rem 1.4rem;
-    border-radius: 999px;             /* pastillita */
+    border-radius: 999px;
     color: #444;
     font-weight: 500;
     text-decoration: none;
     transition: background 0.18s ease, color 0.18s ease, transform 0.12s;
 }
 
-/* Hover */
 .offcanvas .nav-link:hover {
     background: #e4e4e4;
     color: #000;
     transform: translateX(4px);
 }
 
-/* Activo (la que tiene fw-bold la marcamos más fuerte) */
 .offcanvas .nav-link.fw-bold {
     background: #111;
     color: #fff;
 }
-/* ====== MENÚ ADMIN – GRID 2x2 + 1 CENTRADO ====== */
 
 .admin-menu-wrapper {
     display: flex;
@@ -292,24 +256,22 @@ hr {
 
 .admin-menu-grid {
     display: grid;
-    grid-template-columns: repeat(2, 220px);  /* 2 columnas */
+    grid-template-columns: repeat(2, 220px);
     gap: 20px;
     justify-content: center;
 }
 
-/* La última pastilla ocupa las 2 columnas -> centrada */
 .pill-full {
     grid-column: 1 / span 2;
 }
 
-/* Botones tipo pastilla */
 .menu-pill {
     display: flex;
     align-items: center;
     justify-content: center;
 
     height: 56px;
-    width: 220px;                 /* Todas mismo ancho */
+    width: 220px;               
     border-radius: 999px;
 
     font-size: 1.05rem;
@@ -324,7 +286,7 @@ hr {
     cursor: pointer;
 }
 
-/* Variantes de color */
+
 .pill-dark {
     background: #111;
     color: #fff;
@@ -344,7 +306,7 @@ hr {
     background: #e4e4e4;
     transform: translateY(-2px);
 }
-/* ====== MENÚ ADMIN – GRID 2x2 + 1 CENTRADO ====== */
+
 
 .admin-menu-wrapper {
     display: flex;
@@ -354,24 +316,23 @@ hr {
 
 .admin-menu-grid {
     display: grid;
-    grid-template-columns: repeat(2, 220px);  /* 2 columnas */
+    grid-template-columns: repeat(2, 220px);
     gap: 20px;
     justify-content: center;
 }
 
-/* La última pastilla ocupa las 2 columnas -> centrada */
+
 .pill-full {
     grid-column: 1 / span 2;
 }
 
-/* Botones tipo pastilla SOLO para este menú */
 .menu-pill {
     display: flex;
     align-items: center;
     justify-content: center;
 
     height: 56px;
-    width: 220px;                 /* Todas mismo ancho */
+    width: 220px;
     border-radius: 999px;
 
     font-size: 1.05rem;
@@ -386,7 +347,6 @@ hr {
     cursor: pointer;
 }
 
-/* Variantes de color */
 .pill-dark {
     background: #111;
     color: #fff;

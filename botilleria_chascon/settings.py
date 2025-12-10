@@ -81,7 +81,11 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-ALLOWED_HOSTS = [""]
+ALLOWED_HOSTS = [
+    "https://chascon.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 
 LOGIN_URL = "/admin/login/"

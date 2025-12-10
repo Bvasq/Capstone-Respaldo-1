@@ -68,14 +68,13 @@ def confirmar_venta(request):
     try:
         payload = json.loads(request.body.decode("utf-8"))
         items = payload.get("items", [])
-        metodo_pago = payload.get("metodo_pago", "EFECTIVO")  # por si envías el método de pago desde el front
+        metodo_pago = payload.get("metodo_pago", "EFECTIVO")
 
         if not items:
             return HttpResponseBadRequest("No se enviaron ítems en la venta.")
 
         # TRANSACCIÓN ATÓMICA
         with transaction.atomic():
-            # Buscar trabajador y turno activos desde la sesión (si es un trabajador en turno)
             trabajador = None
             turno = None
 
@@ -94,15 +93,13 @@ def confirmar_venta(request):
                 except Turno.DoesNotExist:
                     turno = None
 
-            # Crear la venta asociando usuario (django), trabajador y turno
-            # y guardando el método de pago SI el modelo lo tiene
             venta_kwargs = {
                 "usuario": request.user,
                 "trabajador": trabajador,
                 "turno": turno,
             }
 
-            # Si el modelo Venta tiene campo metodo_pago, lo seteamos (no rompe si no existe)
+
             if hasattr(Venta, "metodo_pago"):
                 venta_kwargs["metodo_pago"] = metodo_pago
 
@@ -117,10 +114,8 @@ def confirmar_venta(request):
                 if cant <= 0:
                     return HttpResponseBadRequest("Cantidad inválida.")
 
-                # Bloqueo de fila para evitar condiciones de carrera
                 producto = Producto.objects.select_for_update().get(id=prod_id)
 
-                # Reglas de negocio
                 if not producto.activo:
                     return HttpResponseBadRequest(f"El producto {producto.nombre} está inactivo.")
 
@@ -195,13 +190,12 @@ def ticket_txt(request, venta_id):
     fecha_local = timezone.localtime(venta.fecha)
     fecha_str = fecha_local.strftime("%d-%m-%Y %H:%M")
 
-    # Método de pago (si existe el campo en el modelo)
     if hasattr(venta, "get_metodo_pago_display"):
         metodo_pago = venta.get_metodo_pago_display()
     else:
         metodo_pago = "N/A"
 
-    # Armado del ticket tipo boleta (40 caracteres aprox por línea)
+    # Armado del ticket final
     lines = []
     lines.append(" BOTILLERÍA EL CHASCÓN")
     lines.append(" Ticket de venta")
@@ -215,12 +209,11 @@ def ticket_txt(request, venta_id):
     lines.append("-" * 40)
 
     for item in items:
-        nombre = (item.producto.nombre or "")[:18]  # cortamos a 18 chars
+        nombre = (item.producto.nombre or "")[:18]
         cantidad = item.cantidad
         precio = int(item.precio_unitario)
         subtotal = int(item.subtotal)
 
-        # Ej: "  2  Coca Cola 1.5L      1200   2400"
         line = f"{cantidad:>4}  {nombre:<18} {precio:>5} {subtotal:>7}"
         lines.append(line)
 
@@ -232,7 +225,6 @@ def ticket_txt(request, venta_id):
 
     contenido = "\n".join(lines)
 
-    # 🔽 AQUÍ EL CAMBIO: forzar descarga en vez de inline
     response = HttpResponse(contenido, content_type="text/plain; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename=\"ticket_{venta.id}.txt\"'
     return response

@@ -10,15 +10,13 @@ from django.http import HttpResponseForbidden
 from ventas.models import Venta, VentaItem, Trabajador, Turno
 
 
-# --- NUEVO: función para permitir SOLO al dueño ---
+# Solo el dueño
 def duenio_required(view_func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_superuser:
             return HttpResponseForbidden("No tienes permiso para ver esta sección.")
         return view_func(request, *args, **kwargs)
     return wrapper
-# --------------------------------------------------
-
 
 @login_required
 @duenio_required
@@ -35,9 +33,7 @@ def index(request):
 
     hoy = timezone.localdate()
 
-    # -----------------------------
-    # 1. Manejo de fechas desde GET
-    # -----------------------------
+#Esto es de los GET
     ds = request.GET.get("desde")
     hs = request.GET.get("hasta")
 
@@ -50,16 +46,14 @@ def index(request):
     desde = parse_date(ds, hoy - timedelta(days=30))
     hasta = parse_date(hs, hoy)
 
-    # -----------------------------
-    # 2. Query base de ventas CONFIRMADAS en el rango
-    # -----------------------------
+#Ventas Confirmadas
     ventas_qs = Venta.objects.filter(
         estado="CONFIRMADA",
         fecha__date__gte=desde,
         fecha__date__lte=hasta,
     )
 
-    # 2.a) Ventas diarias
+# Ventas diarias
     ventas_diarias = (
         ventas_qs
         .annotate(dia=TruncDate("fecha"))
@@ -71,7 +65,7 @@ def index(request):
     vd_labels = [v["dia"].strftime("%Y-%m-%d") for v in ventas_diarias]
     vd_data = [float(v["monto_total"] or 0) for v in ventas_diarias]
 
-    # 2.b) Rendimiento por trabajador y turno
+# Ventas x trabajador
     ventas_trabajador_qs = ventas_qs.filter(trabajador__isnull=False)
 
     stats_trabajadores = (
@@ -84,9 +78,9 @@ def index(request):
         .order_by("-monto_total")
     )
 
-    # -----------------------------
-    # 3. Top productos más vendidos
-    # -----------------------------
+
+#Top productos
+
     top = (
         VentaItem.objects.filter(
             venta__estado="CONFIRMADA",
@@ -102,9 +96,9 @@ def index(request):
     top_labels = [t["nombre"] for t in top]
     top_data = [int(t["cantidad_total"] or 0) for t in top]
 
-    # -----------------------------
-    # 4. Monto por categoría
-    # -----------------------------
+
+#Monto x categoria
+
     monto_expr = ExpressionWrapper(
         F("cantidad") * F("precio_unitario"),
         output_field=DecimalField(max_digits=12, decimal_places=2),
@@ -125,9 +119,9 @@ def index(request):
     cat_labels = [c["cat"] or "Sin categoría" for c in categorias]
     cat_data = [float(c["monto"] or 0) for c in categorias]
 
-    # -----------------------------
-    # 5. Contexto al template
-    # -----------------------------
+
+# Contexto templates
+
     ctx = {
         "desde": desde.strftime("%Y-%m-%d"),
         "hasta": hasta.strftime("%Y-%m-%d"),
@@ -138,7 +132,7 @@ def index(request):
         "cat_labels": cat_labels,
         "cat_data": cat_data,
         "categorias_tabla": categorias,
-        "stats_trabajadores": stats_trabajadores,  # NUEVO
+        "stats_trabajadores": stats_trabajadores,
     }
 
     return render(request, "analisis/index.html", ctx)

@@ -7,10 +7,7 @@ from inventario.models import Producto
 
 User = get_user_model()
 
-
-# ==========================
 #   TRABAJADORES Y TURNOS
-# ==========================
 class Trabajador(models.Model):
     TURNO_CHOICES = [
         ('DIA', 'Día (11:00 - 19:00)'),
@@ -39,7 +36,7 @@ class Turno(models.Model):
     hora_inicio = models.DateTimeField(null=True, blank=True)
     hora_fin = models.DateTimeField(null=True, blank=True)
 
-    # "DIA" o "NOCHE" según el trabajador
+    # TIPO DE TURNO
     turno_tipo = models.CharField(max_length=10)
 
     activo = models.BooleanField(default=True)
@@ -48,9 +45,8 @@ class Turno(models.Model):
         return f"{self.trabajador.nombre} - {self.turno_tipo} - {self.fecha}"
 
 
-# ==========================
-#        MODELO VENTA
-# ==========================
+# MODELO VENTA
+
 class Venta(models.Model):
     ESTADOS = [
         ("PENDIENTE", "Pendiente"),
@@ -81,7 +77,7 @@ class Venta(models.Model):
     motivo_anulacion = models.TextField(blank=True, null=True)
     anulada_en = models.DateTimeField(null=True, blank=True)
 
-    # NUEVO: trabajador y turno asignado
+    # TRABAJADOR Y TURNO
     trabajador = models.ForeignKey(
         Trabajador,
         null=True,
@@ -123,10 +119,8 @@ class Venta(models.Model):
         self.anulada_por = usuario
         self.save()
 
+# ITEMS DE LA VENTA
 
-# ==========================
-#      ITEMS DE LA VENTA
-# ==========================
 class VentaItem(models.Model):
     venta = models.ForeignKey(
         Venta,

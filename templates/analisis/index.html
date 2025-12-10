@@ -11,7 +11,6 @@
     Rango analizado: {{ desde }} a {{ hasta }}.
   </p>
 
-  <!-- Filtro simple por fechas (GET) -->
   <form method="get" class="row g-2 mb-4">
     <div class="col-sm-4">
       <label for="desde" class="form-label mb-0">Desde</label>
@@ -26,7 +25,6 @@
     </div>
   </form>
 
-  <!-- Resumen rápido -->
   <div class="row mb-4">
     <div class="col-md-4 mb-3">
       <div class="card shadow-sm h-100">
@@ -166,10 +164,8 @@
 
 </div>
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // Datos desde Django (listas de Python → listas JS)
   const vdLabels = {{ vd_labels|safe|default:"[]" }};
   const vdData   = {{ vd_data|safe|default:"[]" }};
 

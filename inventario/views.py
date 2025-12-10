@@ -12,8 +12,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .models import Categoria, Producto
 
 
-# ----------------- Helpers ----------------- #
-
 def to_decimal(val):
     """Convierte strings como '1.234,5' o '1234.5' a Decimal seguro."""
     if val is None:
@@ -27,9 +25,6 @@ def to_decimal(val):
     except InvalidOperation:
         return Decimal("0")
 
-
-# ----------------- Vistas de inventario ----------------- #
-
 from django.shortcuts import render
 from django.db.models import F
 
@@ -40,21 +35,21 @@ def lista(request):
     """
     Listado de productos con filtros por categoría y estado (activo/inactivo).
     """
-    # Query base
+    # PRINCIPAL QUERY
     productos = Producto.objects.select_related("categoria").all().order_by("nombre")
 
-    # Todas las categorías para el combo
+    # TODAS LAS CAT
     categorias = Categoria.objects.all().order_by("nombre")
 
-    # Parámetros GET
+    # FILTROS DEL GET
     categoria_id = request.GET.get("categoria", "todas")
     estado = request.GET.get("estado", "todos")
 
-    # Filtro por categoría
+    # FILTRO X CATEGORIA
     if categoria_id and categoria_id != "todas":
         productos = productos.filter(categoria_id=categoria_id)
 
-    # Filtro por estado
+    # Filtro X ESTADO
     if estado == "activos":
         productos = productos.filter(activo=True)
     elif estado == "inactivos":
@@ -82,7 +77,6 @@ def crear(request):
         stock = int(request.POST.get("stock", 0) or 0)
         stock_minimo = int(request.POST.get("stock_minimo", 0) or 0)
 
-        # --- Validaciones ---
         if not sku:
             errores.append("El SKU no puede estar vacío.")
         elif Producto.objects.filter(sku__iexact=sku).exists():
@@ -112,7 +106,7 @@ def crear(request):
                 {"categorias": categorias},
             )
 
-        # Crear producto
+        # CREAR PRODUCTO
         Producto.objects.create(
             sku=sku,
             nombre=nombre,
@@ -125,7 +119,6 @@ def crear(request):
         messages.success(request, "Producto creado correctamente.")
         return redirect("inventario:lista")
 
-    # GET
     return render(
         request,
         "inventario/crear.html",
@@ -148,7 +141,7 @@ def editar(request, pk):
         stock_minimo = int(request.POST.get("stock_minimo", 0) or 0)
         activo = bool(request.POST.get("activo"))
 
-        # --- Validaciones ---
+        # VALIDAR
         if not nuevo_sku:
             errores.append("El SKU no puede estar vacío.")
         elif Producto.objects.filter(sku__iexact=nuevo_sku).exclude(pk=p.pk).exists():
@@ -178,7 +171,7 @@ def editar(request, pk):
                 {"p": p, "categorias": categorias},
             )
 
-        # Actualizar producto
+        # ACTUALIZAR EL PRODUCTO
         p.sku = nuevo_sku
         p.nombre = nombre
         p.categoria = categoria
@@ -191,7 +184,7 @@ def editar(request, pk):
         messages.success(request, "Producto actualizado correctamente.")
         return redirect("inventario:lista")
 
-    # GET
+    # GET X CATEGORAI
     return render(
         request,
         "inventario/editar.html",
@@ -215,7 +208,7 @@ def eliminar(request, pk):
     return redirect("inventario:lista")
 
 
-# ----------------- Importación / exportación CSV ----------------- #
+#ESTO ES PA RECIBIR LOS CSV
 
 @login_required
 def plantilla_csv(request):
@@ -274,7 +267,7 @@ def importar(request):
         return redirect("inventario:lista")
 
     return render(request, "inventario/importar.html")
-# ----------------- Gestión de categorías ----------------- #
+# GESTION DE LAS CATEGORIAS
 
 @login_required
 def categorias_lista(request):
@@ -300,7 +293,6 @@ def categorias_crear(request):
             messages.success(request, "Categoría creada correctamente.")
             return redirect("inventario:categorias_lista")
 
-    # GET o POST con errores → mostrar formulario
     return render(request, "inventario/categoria_form.html")
 
 
@@ -334,8 +326,6 @@ def categorias_eliminar(request, pk):
     """Eliminar categoría (solo si no tiene productos asociados)."""
     cat = get_object_or_404(Categoria, pk=pk)
 
-    # Si tu modelo Producto tiene FK a Categoria sin related_name,
-    # el reverso es `producto_set`.
     tiene_productos = Producto.objects.filter(categoria=cat).exists()
 
     if tiene_productos:

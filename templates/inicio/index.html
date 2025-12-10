@@ -27,7 +27,6 @@
     margin: 0;
   }
 
-  /* 💡 ALERTA FLOTANTE DE STOCK BAJO */
   .stock-alert-float {
     position: fixed;
     right: 20px;
@@ -90,7 +89,7 @@
   </div>
 
   {% if es_admin_menu %}
-    <!-- Análisis (solo admin) -->
+    <!-- Análisis -->
     <div class="col-md-6 col-lg-3">
       <a href="{% url 'analisis:index' %}" class="text-decoration-none text-dark">
         <div class="card home-card h-100">
@@ -104,7 +103,7 @@
       </a>
     </div>
 
-    <!-- Reportes (solo admin) -->
+    <!--Reportes -->
     <div class="col-md-6 col-lg-3">
       <a href="{% url 'reportes:index' %}" class="text-decoration-none text-dark">
         <div class="card home-card h-100">

@@ -25,8 +25,6 @@ class Producto(models.Model):
     sku = models.CharField(max_length=50, unique=True)
     nombre = models.CharField(max_length=200)
 
-    # Ahora categoría es una FK real (si no quieres migrar aún,
-    # puedo hacer una versión manteniendo tu CharField).
     categoria = models.ForeignKey(
         Categoria,
         on_delete=models.PROTECT,

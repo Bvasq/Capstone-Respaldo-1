@@ -2,15 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
-
 from django.db.models import F
 from inventario.models import Producto
-
-# Importa tus modelos de turnos y trabajadores
-# (Si los tienes en otra app, cambia ".models" por la app correcta)
 from ventas.models import Trabajador, Turno, Venta
 from django.db.models import Sum, Count
-
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal
@@ -33,13 +28,13 @@ def landing(request):
     SOLO muestra: logo grande + botón ADMIN + botón INICIO.
     Además, si hay productos con stock bajo, muestra un aviso.
     """
-    # Limpiar modo de acceso cada vez que volvemos al inicio
+    # Limpia cuando inicia otra vez la app
     request.session.pop("modo_acceso", None)
     request.session.pop("es_admin", None)
     request.session.pop("trabajador_id", None)
     request.session.pop("turno_id", None)
 
-    # Productos con stock crítico: stock <= stock_minimo
+    # Productos con stock crítico
     stock_bajo = Producto.objects.filter(
         activo=True,
         stock_minimo__gt=0,
@@ -47,19 +42,14 @@ def landing(request):
     )
 
     contexto = {
-        "hide_menu": True,                 # para que no aparezca navbar
+        "hide_menu": True,
         "hay_stock_bajo": stock_bajo.exists(),
         "total_stock_bajo": stock_bajo.count(),
     }
 
     return render(request, "landing.html", contexto)
 
-
-# ==========================
-#   PIN DE ADMINISTRADOR
-# ==========================
-
-# Puedes cambiar este PIN por el real
+# ADMIN PASS X DEFECTO
 ADMIN_PIN = "1234"
 
 
@@ -72,7 +62,7 @@ def admin_pin(request):
         pin_ingresado = request.POST.get("pin")
         if pin_ingresado == ADMIN_PIN:
             request.session["es_admin"] = True
-            request.session["modo_acceso"] = "admin"   # 👈 NUEVO
+            request.session["modo_acceso"] = "admin"
             messages.success(request, "Acceso concedido.")
             return redirect("admin_menu")
         else:
@@ -105,7 +95,6 @@ def cerrar_admin(request):
     return redirect("landing")
 
 
-# Alias por si en urls todavía se usa "menu_admin"
 def menu_admin(request):
     """
     Compatibilidad con código antiguo.
@@ -114,28 +103,22 @@ def menu_admin(request):
     return admin_menu(request)
 
 
-# ==========================
-#   INICIO MODO VENDEDOR (LEGACY)
-# ==========================
-
 def inicio_limitado(request):
     """
     Vista antigua de 'inicio' modo vendedor.
     Ahora el flujo recomendado es usar 'inicio_trabajador' con turnos.
     """
-    # Dejamos explícito que está en modo vendedor
     request.session["modo_acceso"] = "vendedor"
     return render(request, "menu_inicio.html")
 
 
-# ==========================
-#   TRABAJADORES (SOLO ADMIN)
-# ==========================
+#   TRABAJADORES DESDE EL ADMIN
+
 
 @login_required
 @duenio_required
 def lista_trabajadores(request):
-    # Crear trabajador nuevo
+    # ESTO ES PARA CREAR TRABAJADORES NUEVES
     if request.method == "POST":
         nombre = request.POST.get("nombre", "").strip()
         turno_base = request.POST.get("turno_base")
@@ -143,10 +126,10 @@ def lista_trabajadores(request):
             Trabajador.objects.create(nombre=nombre, turno_base=turno_base)
         return redirect("lista_trabajadores")
 
-    # Lista de trabajadores
+    # LISTADO DE LOS TRABAJADORES
     trabajadores = Trabajador.objects.all().order_by("nombre")
 
-    # Estadísticas de ventas por trabajador (solo ventas confirmadas)
+    # VENTAS X TRABAJADOR
     estadisticas = (
         Venta.objects.filter(
             estado="CONFIRMADA",
@@ -207,10 +190,6 @@ def eliminar_trabajador(request, trabajador_id):
     return redirect("lista_trabajadores")
 
 
-# ==========================
-#   TURNOS DE TRABAJADOR
-# ==========================
-
 def obtener_o_crear_turno_activo(trabajador: Trabajador) -> Turno:
     """
     Busca si el trabajador ya tiene un turno activo hoy.
@@ -249,18 +228,17 @@ def inicio_trabajador(request):
             trabajador = get_object_or_404(Trabajador, id=trabajador_id, activo=True)
             turno = obtener_o_crear_turno_activo(trabajador)
 
-            # Guardar en session quién está trabajando
             request.session["trabajador_id"] = trabajador.id
             request.session["turno_id"] = turno.id
 
             messages.success(request, f"Turno iniciado para {trabajador.nombre}.")
-            return redirect("menu_trabajador")  # menú solo con ventas e inventario
+            return redirect("menu_trabajador") 
         else:
             messages.error(request, "Debe seleccionar un trabajador.")
 
     context = {
         "trabajadores": trabajadores,
-        "hide_menu": True,   # normalmente esta pantalla no muestra navbar
+        "hide_menu": True,
     }
     return render(request, "inicio_trabajador.html", context)
 
@@ -306,7 +284,6 @@ def cerrar_turno(request):
     turno.activo = False
     turno.save()
 
-    # Limpiar la sesión del trabajador
     request.session.pop("trabajador_id", None)
     request.session.pop("turno_id", None)
 

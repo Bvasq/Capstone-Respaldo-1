@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os, sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'botilleria_chascon.settings')

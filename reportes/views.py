@@ -28,7 +28,7 @@ def index(request):
     hoy = timezone.now().date()
     hace_30 = hoy - timedelta(days=30)
 
-    # 1) ESTADO DE STOCK GENERAL
+    #ESTADO DE STOCK GENERAL
     productos = Producto.objects.filter(activo=True).order_by("nombre")
 
     def estado_stock(p):
@@ -46,7 +46,7 @@ def index(request):
         for p in productos
     ]
 
-    # 2) VENTAS ÚLTIMOS 30 DÍAS (todas menos ANULADAS)
+    #VENTAS ÚLTIMOS 30 DÍAS
     ventas_30 = (
         Venta.objects
         .filter(
@@ -58,7 +58,7 @@ def index(request):
 
     total_vendido_30 = ventas_30.aggregate(total=Sum("total"))["total"] or 0
 
-    # 3) MARGEN BRUTO ESTIMADO (costo vs precio) en esos 30 días
+    # COSTOS Y PRECIOS
     margen_expr = ExpressionWrapper(
         F("cantidad") * (F("precio_unitario") - F("producto__costo")),
         output_field=DecimalField(max_digits=12, decimal_places=2),
@@ -71,7 +71,7 @@ def index(request):
         or 0
     )
 
-    # 4) TOP 10 PRODUCTOS MÁS VENDIDOS (por cantidad) en esos 30 días
+    # TOP 10 PRODUCTOS X 30 DIAS
     top = (
         VentaItem.objects.filter(venta__in=ventas_30)
         .values("producto__nombre")
@@ -82,7 +82,7 @@ def index(request):
         .order_by("-cantidad_total")[:10]
     )
 
-    # 5) PRODUCTOS CON STOCK CRÍTICO
+    #PRODUCTOS CON STOCK CRÍTICO
     criticos = (
         Producto.objects.filter(
             activo=True,
@@ -92,7 +92,7 @@ def index(request):
         .order_by("stock")
     )
 
-    # 6) SUGERENCIAS DE COMPRA
+    #SUGERENCIAS DE COMPRA
     sugerencias = (
         Producto.objects.filter(
             activo=True,
@@ -111,16 +111,14 @@ def index(request):
         .order_by("-vendido_30")
     )
 
-    # 7) ALERTAS DE STOCK CRÍTICO NO ATENDIDAS
+    #ALERTAS DE STOCK CRÍTICO NO ATENDIDAS
     alertas = (
         AlertaStock.objects.filter(atendida=False)
         .select_related("producto")
         .order_by("-creado_en")[:20]
     )
 
-    # ---------- NUEVO BLOQUE: GANANCIA POR DÍA (últimos 30 días) ----------
-
-    # rango máximo permitido para el selector (30 días hacia atrás)
+    # RANGO PARA EL SELECTOR X 30 DIAS
     inicio_rango = hoy - timedelta(days=29)
 
     fecha_str = request.GET.get("fecha_ganancia")
@@ -133,11 +131,11 @@ def index(request):
     except ValueError:
         fecha_seleccionada = hoy
 
-    # asegurar que la fecha esté dentro del rango
+    # VALIDACION DEL RANGO DE LAS FECHAS
     if fecha_seleccionada < inicio_rango or fecha_seleccionada > hoy:
         fecha_seleccionada = hoy
 
-    # ventas (no anuladas) de ese día
+    # VENTAS X DIA
     ventas_dia = (
         Venta.objects
         .filter(fecha__date=fecha_seleccionada)
@@ -155,8 +153,6 @@ def index(request):
         items_dia.aggregate(ganancia=Sum(margen_dia_expr)).get("ganancia") or 0
     )
 
-    # ----------------------------------------------------------------------
-
     contexto = {
         "listado": listado,
         "total_vendido_30": total_vendido_30,
@@ -167,7 +163,6 @@ def index(request):
         "alertas": alertas,
         "desde": hace_30,
         "hasta": hoy,
-        # datos del widget de ganancia por día
         "ganancia_dia": ganancia_dia,
         "fecha_ganancia": fecha_seleccionada,
         "inicio_rango_ganancia": inicio_rango,
