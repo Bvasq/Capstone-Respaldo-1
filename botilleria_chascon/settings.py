@@ -81,7 +81,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-ALLOWED_HOSTS = ["catalee.pythonanywhere.com"]
+ALLOWED_HOSTS = [""]
 
 
 LOGIN_URL = "/admin/login/"
